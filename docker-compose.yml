@@ -1,0 +1,33 @@
+services:
+  router:
+    container_name: router
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/reload.sh:/opt/nginx/reload.sh:ro
+      - ssl-cert:/cert
+
+  certbot:
+    container_name: certbot
+    image: certbot/dns-cloudflare:latest
+    entrypoint: /opt/certbot/start.sh
+    restart: always
+    volumes:
+      - ./certbot/start.sh:/opt/certbot/start.sh:ro
+      - ./certbot/renew.sh:/opt/certbot/renew.sh:ro
+      - ./certbot/conf/:/etc/letsencrypt/:rw
+      - ssl-cert:/cert
+    environment:
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+      - DOMAIN=${DOMAIN}
+      - EMAIL=${EMAIL}
+    depends_on:
+      - router
+
+volumes:
+  ssl-cert:
+    
