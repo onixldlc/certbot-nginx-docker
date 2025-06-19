@@ -51,4 +51,13 @@ if [ -f "/etc/letsencrypt/live/${DOMAINPATH}/fullchain.pem" ]; then
 fi
 echo "cert synced!"
 
+
+# check if self signed cert exist, and generate it if it doesnt
+if [ ! -f "/cert/selfsigned/cert.pem" ]; then
+    openssl req -x509 -newkey rsa:4096 -sha256 -days 36500 -nodes \
+        -subj "/C=XX/ST=StateName/L=CityName/O=CompanyName/OU=SelfSigned/CN=SelfSigned" \
+        -keyout key.pem \
+        -out /cert/selfsigned/cert.pem  
+fi
+
 nc -lvnp 9988
