@@ -54,6 +54,7 @@ echo "cert synced!"
 
 # check if self signed cert exist, and generate it if it doesnt
 if [ ! -f "/cert/selfsigned/cert.pem" ]; then
+    mkdir -p /cert/selfsigned
     openssl req -x509 -newkey rsa:4096 -sha256 -days 36500 -nodes \
         -subj "/C=XX/ST=StateName/L=CityName/O=CompanyName/OU=SelfSigned/CN=SelfSigned" \
         -keyout key.pem \
